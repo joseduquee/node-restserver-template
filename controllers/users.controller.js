@@ -1,36 +1,55 @@
 import { response } from "express";
+import { User } from "../models/user.js";
+import bcryptjs from "bcryptjs";
 
-export const usersGet = (req = request, res = response) => {
-  
-  const { q, name = 'No name', apikey, page = 1, limit } = req.query;
-  
+export const usersGet = async(req = request, res = response) => {
+
+  const { limit = 5, from = 0 } = req.query;
+  const query = { status: true }
+
+
+  const [ total, users] = await Promise.all([
+    User.countDocuments(query),
+    User.find(query)
+    .skip(from)
+    .limit(limit)
+  ])
+
   res.json({
-    msg: "get api - controller",
-    q, 
-    name, 
-    apikey, 
-    page, 
-    limit
+    total,
+    users
   });
 };
 
-export const usersPost = (req, res = response) => {
-  
-  const { name, age } = req.body;
-  
+export const usersPost = async(req, res = response) => {
+  const { name, email, password, role } = req.body;
+  const user = new User({ name, email, password, role });
+
+  //Encrypt password
+  const salt = bcryptjs.genSaltSync();
+  user.password = bcryptjs.hashSync(password, salt);
+
+  await user.save();
+
   res.status(201).json({
-    msg: "post api - controller",
-    name, age
+    user,
   });
 };
 
-export const usersPut = (req, res = response) => {
-  
+export const usersPut = async(req, res = response) => {
   const id = req.params.id;
-  
+  const { _id, password, google, email, ...rest } = req.body;
+
+  if (password) {
+    //Encrypt password
+    const salt = bcryptjs.genSaltSync();
+    rest.password = bcryptjs.hashSync(password, salt);
+  }
+
+  const user = await User.findByIdAndUpdate( id, rest );
+
   res.status(400).json({
-    msg: "put api - controller",
-    id
+    user,
   });
 };
 
@@ -40,8 +59,15 @@ export const usersPath = (req, res = response) => {
   });
 };
 
-export const usersDelete = (req, res = response) => {
-  res.json({
-    msg: "delete api - controller",
-  });
+export const usersDelete = async(req, res = response) => {
+  
+  const { id } = req.params;
+
+  //Delete it from DB
+  //Not recommended
+  //const user = await User.findByIdAndDelete( id );
+
+  const user = await User.findByIdAndUpdate( id, { status: false } );
+  
+  res.json(user);
 };
