@@ -1,12 +1,8 @@
 import mongoose from 'mongoose';
 
 export const dbConnection = async() =>{
-    debugger;
     try {
-        await mongoose.connect( process.env.MONGODB_ATLAS, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        })
+        await mongoose.connect( process.env.MONGODB_ATLAS )
 
         console.log('BBDD running');
     } catch (error) {
