@@ -63,11 +63,14 @@ export const usersDelete = async(req, res = response) => {
   
   const { id } = req.params;
 
+  // const uid = req.uid;
+
   //Delete it from DB
   //Not recommended
   //const user = await User.findByIdAndDelete( id );
 
   const user = await User.findByIdAndUpdate( id, { status: false } );
+  // const authenticatedUser = req.user;
   
   res.json(user);
 };

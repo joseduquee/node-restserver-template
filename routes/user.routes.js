@@ -7,9 +7,8 @@ import {
   usersPost,
   usersPut,
 } from "../controllers/users.controller.js";
-import { fieldsValidator } from "../middlewares/fields-validator.js";
+import { fieldsValidator, jwtValidator, hasRole, isAdmin} from "../middlewares/index.js";
 import { existsEmail, isRoleValid, existsUserById } from '../helpers/db-validators.js'
-
 
 export const router = Router();
 
@@ -41,6 +40,9 @@ router.put('/:id', [
 router.patch('/', usersPath);
 
 router.delete('/:id', [
+  jwtValidator,
+  // isAdmin,
+  hasRole('ADMIN_ROLE', 'SALES_ROLE'),
   check('id', 'It is not a valid id').isMongoId(),
   check('id').custom(existsUserById),
   fieldsValidator
