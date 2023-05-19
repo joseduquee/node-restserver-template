@@ -10,11 +10,11 @@ import {
 import { fieldsValidator, jwtValidator, hasRole, isAdmin} from "../middlewares/index.js";
 import { existsEmail, isRoleValid, existsUserById } from '../helpers/db-validators.js'
 
-export const router = Router();
+export const userRouter = Router();
 
-router.get('/', usersGet);
+userRouter.get('/', usersGet);
 
-router.post('/',
+userRouter.post('/',
   [
     check("name", "Name is require").not().isEmpty(),
     check("email", "Email is not valid").isEmail(),
@@ -30,16 +30,16 @@ router.post('/',
   usersPost
 );
 
-router.put('/:id', [
+userRouter.put('/:id', [
   check('id', 'It is not a valid id').isMongoId(),
   check('id').custom(existsUserById),
   check('role').custom( isRoleValid ),
   fieldsValidator
 ], usersPut);
 
-router.patch('/', usersPath);
+userRouter.patch('/', usersPath);
 
-router.delete('/:id', [
+userRouter.delete('/:id', [
   jwtValidator,
   // isAdmin,
   hasRole('ADMIN_ROLE', 'SALES_ROLE'),

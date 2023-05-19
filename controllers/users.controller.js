@@ -48,7 +48,7 @@ export const usersPut = async(req, res = response) => {
 
   const user = await User.findByIdAndUpdate( id, rest );
 
-  res.status(400).json({
+  res.json({
     user,
   });
 };
