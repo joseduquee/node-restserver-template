@@ -34,3 +34,14 @@ export const existsProductById = async (id = "") => {
     throw new Error(`Id ${id} does not exists`);
   }
 };
+
+/**
+ * Collections validator
+ */
+export const collectionsAllow = ( collection = '', collections = []) => {
+  const included = collections.includes( collection);
+  if(!included) {
+    throw new Error(`Collection ${ collection } isn't allowed, ${collections}`);
+  }
+  return true;
+}
