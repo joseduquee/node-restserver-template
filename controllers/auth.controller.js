@@ -1,4 +1,4 @@
-import { json, response } from "express";
+import { response } from "express";
 import { User } from "../models/user.js";
 import bcryptjs from "bcryptjs";
 import { generateJWT } from "../helpers/generate-jwt.js";
@@ -84,3 +84,14 @@ export const googleSignIn = async (req, resp) => {
     });
   }
 };
+
+export const renovateToken = async( req, res = response ) => {
+  const { user } = req;
+
+  //Generate JWT
+  const token = await generateJWT(user.id);
+
+  res.json({
+    user, token
+  })
+}

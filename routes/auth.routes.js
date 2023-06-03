@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { check } from "express-validator";
-import { googleSignIn, login } from "../controllers/auth.controller.js";
-import { fieldsValidator } from "../middlewares/fields-validator.js";
+import { googleSignIn, login, renovateToken } from "../controllers/auth.controller.js";
+import { fieldsValidator, jwtValidator } from "../middlewares/index.js";
 
 export const authRouter = Router();
 
@@ -15,3 +15,5 @@ authRouter.post('/google', [
     check('id_token', 'Id token is require').not().isEmpty(),
     fieldsValidator
 ], googleSignIn);
+
+authRouter.get('/', jwtValidator, renovateToken)
